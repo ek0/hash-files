@@ -1,21 +1,15 @@
-(defun hash-data-md5 (data)
-  (princ (secure-hash 'md5 data))
+(defun println (string)
+  (princ string)
   (terpri))
+
+(defun hash-data-md5 (data)
+  (secure-hash 'md5 data))
 
 (defun hash-data-sha1 (data)
-  (princ (secure-hash 'sha1 data))
-  (terpri))
+  (secure-hash 'sha1 data))
 
 (defun hash-data-sha256 (data)
-  (princ (secure-hash 'sha256 data))
-  (terpri))
-
-(defun hash-all (data)
-  (princ (secure-hash 'md5 data))
-  (terpri)
-  (hash-data-sha1 data)
-  (princ (secure-hash 'sha256 data))
-  (terpri))
+  (secure-hash 'sha256 data))
 
 (defun hash-file-md5 (filename)
   (when (file-regular-p filename)
@@ -74,16 +68,23 @@
 (defun dired-do-hash-md5 (files)
   (interactive (list (dired-get-marked-files)))
   (with-output-to-temp-buffer "*debug*"
-    (mapc 'hash-file-md5 files)))
+    (mapc 'println (mapcar 'hash-file-md5 files))))
 
 (defun dired-do-hash-sha1 (files)
   (interactive (list (dired-get-marked-files)))
   (with-output-to-temp-buffer "*debug*"
-    (mapc 'hash-file-sha1 files)))
+    (mapc 'println (mapcar 'hash-file-sha1 files))))
 
 (defun dired-do-hash-sha256 (files)
   (interactive (list (dired-get-marked-files)))
   (with-output-to-temp-buffer "*debug*"
-    (mapc 'hash-file-sha256 files)))
+    (mapc 'println (mapcar 'hash-file-sha256 files))))
+
+(defun dired-do-hash-all (files)
+  (interactive (list (dired-get-marked-files)))
+  (with-output-to-temp-buffer "*hashes*"
+    (mapc 'println (mapcar 'hash-file-md5 files))
+    (mapc 'println (mapcar 'hash-file-sha1 files))
+    (mapc 'println (mapcar 'hash-file-sha256 files))))
 
 (provide 'hash-files)
